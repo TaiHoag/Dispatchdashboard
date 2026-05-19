@@ -57,12 +57,22 @@ async function fetchTab(tab: string): Promise<Record<string, string>[]> {
 const NODE_COORDS: Record<string, [number, number]> = {
   'NODE-HCM': [10.7626, 106.6602],   // TP.HCM
   'NODE-BD': [11.1733, 106.6519],    // Bình Dương
-  'NODE-DN': [10.9522, 106.8225],    // Đồng Nai
-  'NODE-BĐ': [13.7820, 109.2196],    // Bình Định (Quy Nhon)
+  'NODE-DN': [16.0544, 108.2022],    // Đà Nẵng
+  'NODE-ĐN': [10.9522, 106.8225],    // Đồng Nai
+  'NODE-LD': [11.9404, 108.4583],    // Lâm Đồng
+  'NODE-LĐ': [11.9404, 108.4583],    // Lâm Đồng
+  'NODE-QB': [17.4833, 106.6000],    // Quảng Bình
+  'NODE-QT': [16.7493, 107.1881],    // Quảng Trị
   'NODE-HUE': [16.4637, 107.5909],   // Huế
-  'NODE-DNG': [16.0544, 108.2022],   // Đà Nẵng
+  'NODE-HT': [18.3333, 105.9000],    // Hà Tĩnh
+  'NODE-QN': [15.5658, 108.4875],    // Quảng Nam
+  'NODE-NA': [18.6667, 105.6667],    // Nghệ An
+  'NODE-TH': [19.8000, 105.7667],    // Thanh Hoá
+  'NODE-NĐ': [20.4333, 106.1667],    // Nam Định
+  'NODE-BĐ': [13.7820, 109.2196],    // Bình Định
   'NODE-HN': [21.0285, 105.8542],    // Hà Nội
   'NODE-CT': [10.0452, 105.7469],    // Cần Thơ
+  'NODE-NB': [20.2506, 105.9745]     // Ninh Bình
 };
 
 function hashCoord(seed: string): [number, number] {
