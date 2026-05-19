@@ -14,7 +14,7 @@ export interface Emergency {
   status: 'pending' | 'dispatched' | 'resolved';
   timestamp: Date;
   waitingDays: number;
-  areaDangerScore: number; // 0-10. >= 8 means heavily flooded (canoe only)
+  areaDangerScore: number; // 1-3. 3 means heavily flooded (canoe only)
   victims: EmergencyVictims;
   urgencyScore?: number;
   assignedVehicleIds?: string[];
@@ -33,6 +33,10 @@ export interface Vehicle {
   name: string;
   type: 'small_truck' | 'big_truck' | 'canoe';
   capacity: number; // kg
+  available?: boolean;
+  baseNodeId?: string;
+  role?: string;
+  resources?: string;
 }
 
 export interface FloodZone {

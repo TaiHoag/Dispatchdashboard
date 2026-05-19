@@ -5,28 +5,24 @@ import { getPackagesForEmergency, isCanoeOnly, optimizeKnapsack } from '../utils
 
 interface DispatchModalProps {
   emergency: Emergency;
+  vehicles: Vehicle[];
   onClose: () => void;
   onConfirmDispatch: (emergencyId: string, vehicleIds: string[]) => void;
 }
 
-const VEHICLES: Vehicle[] = [
-  { id: 'c1', name: 'Canoe Alpha', type: 'canoe', capacity: 300 },
-  { id: 'c2', name: 'Canoe Bravo', type: 'canoe', capacity: 300 },
-  { id: 'c3', name: 'Canoe Charlie', type: 'canoe', capacity: 350 },
-  { id: 't1', name: 'Small Truck 1', type: 'small_truck', capacity: 1000 },
-  { id: 't2', name: 'Small Truck 2', type: 'small_truck', capacity: 1200 },
-  { id: 'b1', name: 'Heavy Truck 1', type: 'big_truck', capacity: 5000 },
-];
-
-export default function DispatchModal({ emergency, onClose, onConfirmDispatch }: DispatchModalProps) {
+export default function DispatchModal({ emergency, vehicles, onClose, onConfirmDispatch }: DispatchModalProps) {
   const canoeOnly = isCanoeOnly(emergency);
+  const visibleVehicles = useMemo(
+    () => vehicles.filter((v) => v.available !== false),
+    [vehicles]
+  );
   const allowed = useMemo(
-    () => (canoeOnly ? VEHICLES.filter((v) => v.type === 'canoe') : VEHICLES),
-    [canoeOnly]
+    () => (canoeOnly ? visibleVehicles.filter((v) => v.type === 'canoe') : visibleVehicles),
+    [canoeOnly, visibleVehicles]
   );
   const [selectedIds, setSelectedIds] = useState<string[]>([allowed[0]?.id].filter(Boolean) as string[]);
 
-  const selectedVehicles = VEHICLES.filter((v) => selectedIds.includes(v.id));
+  const selectedVehicles = vehicles.filter((v) => selectedIds.includes(v.id));
   const combinedCapacity = selectedVehicles.reduce((s, v) => s + v.capacity, 0);
 
   const packages = useMemo(() => getPackagesForEmergency(emergency), [emergency]);
@@ -67,7 +63,12 @@ export default function DispatchModal({ emergency, onClose, onConfirmDispatch }:
           <section>
             <h3 className="text-base font-black uppercase mb-3">1. Select Vehicle(s)</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {VEHICLES.map((v) => {
+              {visibleVehicles.length === 0 && (
+                <div className="col-span-full text-xs font-bold uppercase border-2 border-black bg-[#F4F5F0] p-3">
+                  No available volunteers in the sheet.
+                </div>
+              )}
+              {visibleVehicles.map((v) => {
                 const isAllowed = !canoeOnly || v.type === 'canoe';
                 const isSelected = selectedIds.includes(v.id);
                 return (

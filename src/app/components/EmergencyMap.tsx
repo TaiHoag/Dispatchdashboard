@@ -11,12 +11,11 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import { MapPin } from 'lucide-react';
-import { Emergency } from '../types';
+import { Emergency, FloodZone } from '../types';
 import {
   buildCanoePath,
   DEPOT_LOCATION,
   fetchOsrmRoute,
-  FLOOD_ZONES,
   isCanoeOnly,
   MAP_CENTER,
   routeDistanceMeters,
@@ -26,6 +25,7 @@ interface EmergencyMapProps {
   emergencies: Emergency[];
   selectedEmergency: string | null;
   onEmergencySelect: (id: string) => void;
+  floodZones?: FloodZone[];
 }
 
 const SEVERITY_COLOR: Record<string, string> = {
@@ -75,7 +75,7 @@ interface RouteData {
   distanceKm: number;
 }
 
-export default function EmergencyMap({ emergencies, selectedEmergency, onEmergencySelect }: EmergencyMapProps) {
+export default function EmergencyMap({ emergencies, selectedEmergency, onEmergencySelect, floodZones = [] }: EmergencyMapProps) {
   const [routes, setRoutes] = useState<RouteData[]>([]);
 
   const dispatched = useMemo(
@@ -120,7 +120,7 @@ export default function EmergencyMap({ emergencies, selectedEmergency, onEmergen
         />
         <ZoomControl position="topright" />
 
-        {FLOOD_ZONES.map((z) => (
+        {floodZones.map((z) => (
           <Circle
             key={z.id}
             center={z.center}

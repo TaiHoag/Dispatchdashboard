@@ -1,85 +1,45 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import EmergencyMap from './components/EmergencyMap';
 import EmergencyList from './components/EmergencyList';
 import DashboardStats from './components/DashboardStats';
 import DispatchModal from './components/DispatchModal';
-import { Filter, Bell, Settings, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Emergency } from './types';
-import { calculateUrgency } from './utils/algorithms';
-
-const generateInitialEmergencies = (): Emergency[] => {
-  const data: Emergency[] = [
-    {
-      id: 'em-1',
-      location: [16.465, 107.58],
-      severity: 'critical',
-      type: 'Severe Flooding - Imperial City',
-      address: 'Phu Hau, Hue, Thua Thien Hue, Vietnam',
-      status: 'pending',
-      timestamp: new Date(Date.now() - 5 * 60000),
-      waitingDays: 2,
-      areaDangerScore: 8, // canoe only
-      victims: { normal: 10, childrenElders: 5, injured: 2, immediateHelp: 1 },
-    },
-    {
-      id: 'em-2',
-      location: [16.45, 107.60],
-      severity: 'high',
-      type: 'River Overflow - Perfume River',
-      address: 'Vy Da, Hue, Thua Thien Hue, Vietnam',
-      status: 'dispatched',
-      timestamp: new Date(Date.now() - 120 * 60000),
-      waitingDays: 1,
-      areaDangerScore: 7,
-      victims: { normal: 20, childrenElders: 8, injured: 1, immediateHelp: 0 },
-      assignedVehicleIds: ['t1'],
-    },
-    {
-      id: 'em-3',
-      location: [16.48, 107.56],
-      severity: 'medium',
-      type: 'Isolated Village - Road Access Cut',
-      address: 'Huong Long, Hue, Vietnam',
-      status: 'pending',
-      timestamp: new Date(Date.now() - 300 * 60000),
-      waitingDays: 4,
-      areaDangerScore: 5,
-      victims: { normal: 50, childrenElders: 15, injured: 0, immediateHelp: 0 },
-    },
-    {
-      id: 'em-4',
-      location: [16.44, 107.55],
-      severity: 'critical',
-      type: 'Flash Flood - Evacuation Needed',
-      address: 'Thuy Bieu, Hue, Vietnam',
-      status: 'pending',
-      timestamp: new Date(Date.now() - 15 * 60000),
-      waitingDays: 1,
-      areaDangerScore: 9, // canoe only
-      victims: { normal: 5, childrenElders: 4, injured: 3, immediateHelp: 2 },
-    },
-    {
-      id: 'em-5',
-      location: [16.47, 107.62],
-      severity: 'low',
-      type: 'Minor Water Accumulation',
-      address: 'Phu Thuong, Hue, Vietnam',
-      status: 'resolved',
-      timestamp: new Date(Date.now() - 2800 * 60000),
-      waitingDays: 0,
-      areaDangerScore: 2,
-      victims: { normal: 2, childrenElders: 0, injured: 0, immediateHelp: 0 },
-    },
-  ];
-  return data.map((e) => ({ ...e, urgencyScore: calculateUrgency(e) }));
-};
+import { Filter, Bell, Settings, PanelLeftClose, PanelLeftOpen, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Emergency, FloodZone, Vehicle } from './types';
+import { loadFromSheet } from './services/sheetData';
 
 export default function App() {
-  const [emergencies, setEmergencies] = useState<Emergency[]>(generateInitialEmergencies());
+  const [emergencies, setEmergencies] = useState<Emergency[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [floodZones, setFloodZones] = useState<FloodZone[]>([]);
   const [selectedEmergencyId, setSelectedEmergencyId] = useState<string | null>(null);
   const [dispatchModalEmergencyId, setDispatchModalEmergencyId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [dataStatus, setDataStatus] = useState<'loading' | 'live' | 'error'>('loading');
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refreshFromSheet = async () => {
+    setRefreshing(true);
+    try {
+      const { emergencies: ems, vehicles: vs, floodZones: fz } = await loadFromSheet();
+      if (!ems.length) throw new Error('Sheet returned no SOS requests.');
+      setEmergencies(ems);
+      setVehicles(vs);
+      setFloodZones(fz);
+      setDataStatus('live');
+      setDataError(null);
+    } catch (err) {
+      setDataStatus('error');
+      setDataError(err instanceof Error ? err.message : 'Unable to load sheet.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshFromSheet();
+  }, []);
 
   const handleConfirmDispatch = (emergencyId: string, vehicleIds: string[]) => {
     setEmergencies((prev) =>
@@ -131,6 +91,7 @@ export default function App() {
           emergencies={emergencies}
           selectedEmergency={selectedEmergencyId}
           onEmergencySelect={setSelectedEmergencyId}
+          floodZones={floodZones}
         />
       </main>
 
@@ -164,6 +125,14 @@ export default function App() {
                 </div>
               </div>
               <div className="flex gap-2">
+                <button
+                  onClick={refreshFromSheet}
+                  disabled={refreshing}
+                  title="Refresh from Google Sheet"
+                  className="p-2 border-2 border-black hover:bg-gray-100 shadow-[2px_2px_0_0_#000000] transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                </button>
                 <button className="p-2 border-2 border-black hover:bg-gray-100 shadow-[2px_2px_0_0_#000000] transition-colors hidden sm:block">
                   <Settings className="w-4 h-4" />
                 </button>
@@ -174,6 +143,22 @@ export default function App() {
                   <PanelLeftClose className="w-4 h-4" />
                 </button>
               </div>
+            </div>
+            <div
+              className={`flex items-start gap-2 px-2 py-1 border-2 border-black text-[10px] font-bold uppercase ${
+                dataStatus === 'live'
+                  ? 'bg-[#C8F7C5]'
+                  : dataStatus === 'error'
+                  ? 'bg-[#FFE066]'
+                  : 'bg-white'
+              }`}
+            >
+              {dataStatus === 'error' && <AlertTriangle className="w-3 h-3 mt-px shrink-0" />}
+              <span className="leading-tight">
+                {dataStatus === 'loading' && 'Loading from Google Sheet…'}
+                {dataStatus === 'live' && `Live — ${emergencies.length} SOS · ${vehicles.length} volunteers`}
+                {dataStatus === 'error' && (dataError || 'Sheet unavailable')}
+              </span>
             </div>
           </header>
 
@@ -238,6 +223,7 @@ export default function App() {
       {dispatchEmergency && (
         <DispatchModal
           emergency={dispatchEmergency}
+          vehicles={vehicles}
           onClose={() => setDispatchModalEmergencyId(null)}
           onConfirmDispatch={handleConfirmDispatch}
         />

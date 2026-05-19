@@ -1,0 +1,46 @@
+.DS_Store
+Thumbs.db
+# Node modules
+node_modules/
+
+# Vite / build
+dist/
+build/
+out/
+.vite/
+.cache/
+.esbuild/
+
+# Coverage
+coverage/
+
+# Environment files
+.env
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor and OS files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Docker / Devcontainer
+.devcontainer/
+
+# Misc
+*.pem
+*.key
+*.crt
+*.p12
