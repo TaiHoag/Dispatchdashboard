@@ -54,7 +54,7 @@ export default function DispatchModal({ emergency, vehicles, onClose, onConfirmD
           <div className="bg-[#F4F5F0] border-b-4 border-black px-4 py-3 flex items-start gap-2 text-black">
             <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
             <div className="text-sm font-bold uppercase">
-              HEAVY FLOODING DETECTED (DANGER {emergency.areaDangerScore}/10). CANOES ONLY — TRUCKS DISABLED.
+              HEAVY FLOODING DETECTED (DANGER {emergency.areaDangerScore}/4). CANOES ONLY — TRUCKS DISABLED.
             </div>
           </div>
         )}

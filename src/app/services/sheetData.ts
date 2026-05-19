@@ -135,12 +135,12 @@ function mapStatus(opStatus: string, dispatchStatus: string | undefined): Emerge
   return 'pending';
 }
 
-// Map severity index to 1-3. "Boat" required means heavily flooded (3).
+// Map severity index to 1-4. "Boat" required means heavily flooded (3).
 function dangerScoreFromRow(requiredVehicleType: string, severityIndex: number): number {
   const v = (requiredVehicleType || '').toLowerCase();
   const boatOnly = v.includes('boat') && !v.includes('truck');
-  if (boatOnly) return 3;
-  return Math.max(1, Math.min(3, severityIndex));
+  if (boatOnly) return 4;
+  return Math.max(1, Math.min(4, severityIndex));
 }
 
 function parseTime(ts: string): Date {

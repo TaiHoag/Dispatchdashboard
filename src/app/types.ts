@@ -14,7 +14,7 @@ export interface Emergency {
   status: 'pending' | 'dispatched' | 'resolved';
   timestamp: Date;
   waitingDays: number;
-  areaDangerScore: number; // 1-3. 3 means heavily flooded (canoe only)
+  areaDangerScore: number; // 1-4. 3 means heavily flooded (canoe only)
   victims: EmergencyVictims;
   urgencyScore?: number;
   assignedVehicleIds?: string[];
