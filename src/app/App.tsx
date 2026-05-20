@@ -3,6 +3,7 @@ import EmergencyMap from './components/EmergencyMap';
 import EmergencyList from './components/EmergencyList';
 import DashboardStats from './components/DashboardStats';
 import DispatchModal from './components/DispatchModal';
+import ChatBot from './components/ChatBot';
 import { Filter, Bell, Settings, PanelLeftClose, PanelLeftOpen, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Emergency, FloodZone, Vehicle } from './types';
 import { loadFromSheet } from './services/sheetData';
@@ -121,7 +122,6 @@ export default function App() {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold tracking-tight uppercase">FloodRescue</h1>
-                  <p className="text-xs font-semibold uppercase">Hue Region</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -228,6 +228,9 @@ export default function App() {
           onConfirmDispatch={handleConfirmDispatch}
         />
       )}
+
+      {/* Chatbot overlay */}
+      <ChatBot emergencies={emergencies} vehicles={vehicles} />
     </div>
   );
 }

@@ -135,7 +135,7 @@ export default function EmergencyMap({ emergencies, selectedEmergency, onEmergen
         ))}
 
         <Marker position={DEPOT_LOCATION} icon={depotIcon}>
-          <Popup>HQ Depot — Hue Central</Popup>
+          <Popup>HQ Depot</Popup>
         </Marker>
 
         {routes.map((r) => (
