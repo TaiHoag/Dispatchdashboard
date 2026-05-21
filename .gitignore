@@ -44,3 +44,6 @@ pnpm-debug.log*
 *.key
 *.crt
 *.p12
+
+# Scratch
+scratch/
