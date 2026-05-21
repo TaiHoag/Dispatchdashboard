@@ -80,7 +80,7 @@ Directives:
       const prompt = `System Context:\n${systemInstruction}\n\nUser Question:\n${userMsg}`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-3.1-flash-lite',
         contents: prompt,
       });
 
