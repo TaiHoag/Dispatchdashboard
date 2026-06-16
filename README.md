@@ -1,7 +1,7 @@
 
   # Admin dashboard for emergency dispatch
 
-  This is a code bundle for Admin dashboard for emergency dispatch. The original project is available at https://www.figma.com/design/e2EJcTr9AI6zWJSAPV6hhI/Admin-dashboard-for-emergency-dispatch.
+  https://taihoag.github.io/Dispatchdashboard/
 
   ## Running the code
 
